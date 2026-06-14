@@ -83,13 +83,22 @@ export async function chatStream(cfg: ChatProviders, messages: ChatTurn[], onDel
   }
 
   const base = cfg.ollama.url.replace(/\/+$/, "");
-  const res = await fetch(`${base}/api/chat`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ model: cfg.ollama.model, messages, stream: true, think: false }),
-  });
+  if (!cfg.ollama.model) throw new Error("No Ollama chat model selected — pick one in Settings → Chat.");
+
+  const post = (body: Record<string, unknown>) =>
+    fetch(`${base}/api/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  const baseBody = { model: cfg.ollama.model, messages, stream: true };
+  let res = await post({ ...baseBody, think: false });
+  if (res.status === 400) res = await post(baseBody);
   if (!res.ok || !res.body) {
-    throw new Error(`Ollama (HTTP ${res.status}) — check the URL, the installed model and CORS access (OLLAMA_ORIGINS).`);
+    const detail = (await res.text().catch(() => "")).slice(0, 200).trim();
+    throw new Error(
+      `Ollama (HTTP ${res.status})${detail ? ` — ${detail}` : ""}. Check the model name, the server URL, and CORS (OLLAMA_ORIGINS).`,
+    );
   }
   return readStream(res.body, (line) => {
     try {
