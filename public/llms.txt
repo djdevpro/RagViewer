@@ -1,0 +1,25 @@
+# RagViewer
+
+> A 100% client-side web app that turns PDFs into a queryable knowledge base in the browser. It converts documents to DocLang (a structured XML format), chunks them, computes embeddings, lets you explore the embedding cloud, and answers questions over your documents with retrieval-augmented generation (RAG). Documents can stay entirely on-device.
+
+Version: 0.1.0 (2026-06-14)
+Home: https://djdevpro.github.io/RagViewer/
+
+## What it does
+- Convert a PDF to DocLang in the browser (local headless engine) or via a docling-serve server.
+- Chunk the document with 5 configurable strategies (structural, hybrid, recursive, fixed, semantic) and live preview.
+- Embed chunks with Transformers.js (in-browser) or an Ollama model.
+- Store vectors in EntityDB (local, IndexedDB) or a remote Qdrant server.
+- Explore: an interactive embedding cloud + semantic search that re-ranks chunks by distance.
+- Chat: streaming RAG answers (OpenAI or Ollama), with cited sources and conversation history.
+- Versioned chunkings: snapshot multiple chunking configs and bind each conversation to one.
+
+## Key facts
+- Privacy: can run fully client-side and offline (installable PWA); no upload required.
+- Embeddings: Transformers.js (e.g. Xenova/all-MiniLM-L6-v2) or Ollama.
+- Vector DB: EntityDB (browser) or Qdrant (server).
+- Chat LLM: OpenAI API or a local Ollama server.
+
+## Links
+- DocLang spec: https://github.com/doclang-project/doclang
+- Docling: https://github.com/docling-project/docling
